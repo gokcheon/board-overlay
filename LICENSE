@@ -1,0 +1,43 @@
+보드게임 오버레이 (Board Overlay)
+Copyright (c) 2026 곡천 (gokcheon). All rights reserved.
+공식 저장소: https://github.com/gokcheon/board-overlay
+
+이 소프트웨어는 오픈소스가 아니며, 모든 권리는 저작권자 곡천에게 있습니다.
+
+[허용되는 것]
+- 공식 저장소의 Releases에서 받은 설치판을 개인 방송·시청 용도로 사용하는 것
+
+[금지되는 것 — 저작권자의 사전 서면 허락 없이는]
+- 무단 재배포: 이 앱 또는 소스코드를 다른 곳에 다시 올리거나 배포하는 행위
+- 무단 수정·2차 배포: 이름·색·디자인·코드 일부를 바꾼 파생물을 만들어
+  배포하는 행위 (리브랜딩 포함)
+- 판매: 이 앱 또는 파생물을 유상으로 판매·대여·수익화하는 행위
+- 앱의 이름·크레딧·제작자 표기를 제거하거나 제작자를 사칭하는 행위
+
+이 저장소의 코드가 공개되어 있는 것은 투명성을 위한 것일 뿐,
+위 행위에 대한 허락을 뜻하지 않습니다.
+
+이 앱은 치지직 스트리머 김띵띵띵 님의 방송 1주년을 기념해 만들어진
+팬메이드 앱이며, 네이버/치지직 공식 서비스와 무관합니다.
+이 소프트웨어는 "있는 그대로" 제공되며, 사용에 따른 책임은 사용자에게 있습니다.
+
+문의: 저장소 Issues 탭
+
+----------------------------------------------------------------------
+
+Board Overlay — Proprietary License (NOT open source)
+Copyright (c) 2026 gokcheon. All rights reserved.
+
+This software and its source code are made publicly visible for
+transparency only. No license is granted to redistribute, modify,
+create derivative works from, rebrand, or sell this software, in whole
+or in part, without prior written permission from the copyright holder.
+Personal use of the official installers from this repository's Releases
+page is permitted.
+
+Unauthorized redistribution — including versions with altered names,
+colors, or credits — constitutes copyright infringement.
+
+This is a fan-made app celebrating Chzzk streamer 김띵띵띵's 1st
+anniversary and is not affiliated with NAVER/Chzzk. Provided "AS IS",
+without warranty of any kind.
