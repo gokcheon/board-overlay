@@ -1,0 +1,62 @@
+# 보드게임 오버레이 — 완전 자동 배포 (fix33)
+# 올리기.bat이 태그(fixNN)를 푸시하면, 깃허브의 윈도우 서버가 이 지시서대로
+# 설치마법사(exe)를 빌드하고 릴리스까지 발행한다. 발행되는 순간 자동 업데이트(fix28)가 감지.
+name: build-installer
+
+on:
+  push:
+    tags: ['fix*']
+
+permissions:
+  contents: write          # 릴리스 발행 권한 (자동 제공되는 GITHUB_TOKEN 사용 — 별도 토큰 불필요)
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: 소스 받기
+        uses: actions/checkout@v4
+
+      - name: 파이썬 준비
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 패키지 설치
+        run: |
+          python -m pip install --upgrade pip pyinstaller
+          python -m pip install -r requirements.txt
+
+      - name: exe 빌드 (PyInstaller)
+        run: python -m PyInstaller BoardOverlay.spec --noconfirm
+
+      - name: 리소스 복사 (빌드.bat 3단계와 동일)
+        run: |
+          Copy-Item static dist/BoardOverlay/static -Recurse -Force
+          Copy-Item boards dist/BoardOverlay/boards -Recurse -Force
+          Get-ChildItem -Filter '패치노트_*.txt' | Copy-Item -Destination dist/BoardOverlay/ -ErrorAction SilentlyContinue
+          foreach ($f in '업데이트주소.txt','자동업데이트_안내.txt','배포안내.txt') {
+            if (Test-Path $f) { Copy-Item $f dist/BoardOverlay/ }
+          }
+
+      - name: Inno Setup 설치
+        run: choco install innosetup -y --no-progress
+
+      - name: 설치마법사 만들기 (버전은 server/version.py에서)
+        run: |
+          $ver = python -m server.version
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /Q /DAppVer=$ver 설치마법사.iss
+          Rename-Item '배포용/보드게임오버레이_설치.exe' "BoardOverlay_Setup_${{ github.ref_name }}.exe"
+
+      - name: 릴리스 설명 준비 (패치노트 동봉)
+        run: |
+          $f = "패치노트_${{ github.ref_name }}.txt"
+          if (Test-Path $f) { Copy-Item $f release_body.txt }
+          else { Set-Content release_body.txt "보드게임 오버레이 ${{ github.ref_name }}" -Encoding utf8 }
+
+      - name: 릴리스 발행 (자동 업데이트가 여기를 봐요)
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body_path: release_body.txt
+          files: 배포용/BoardOverlay_Setup_${{ github.ref_name }}.exe

@@ -1,0 +1,306 @@
+/* 오버레이 (명세 8장) — 1920×1080 전체, 배경 투명, 목업 v4 확정 톤 */
+/* fix21: 시청자 가독성 — 두꺼운 라운드 폰트(Jua). 인터넷 없으면 맑은고딕 굵게로 폴백 */
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+/* hidden 속성은 어떤 display 지정보다 우선한다 (fix4 버그 수정) */
+[hidden] { display: none !important; }
+
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; overflow: hidden; }
+body {
+  color: var(--ink);
+  font-family: "Jua", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-weight: 400;              /* Jua는 단일 굵기 — 폴백일 땐 아래 bold 보정 적용 */
+}
+/* 폴백 글꼴로 뜰 때도 얇아 보이지 않게 — 숫자·라벨류는 굵게 */
+.timerchip, .statusbar, .sb .dest, .sb .nick, .tile .lb { font-weight: 700; }
+/* fix22: 시청자 2차 피드백 — 남색 글자 + 말랑 그림자 (②+④ 조합, 곡천 확정) */
+/* fix23: 그림자 진하기 70% → 60% (시안 2탄 ㉱ — 곡천 확정) */
+.tile .lb, .tile .sub, .statusbar, .timerchip, .sb .dest, .sb .nick, .sb .queue {
+  text-shadow: 0 6px 10px rgba(74, 55, 100, .60);   /* 길고 진한 소프트 · 60% (곡천 확정) */
+}
+.statusbar, .timerchip .tlb, .sb .dest { color: #2B3A67; }
+@supports (font-family: "Jua") { body { letter-spacing: .015em; } }
+
+#stage { width: 1920px; height: 1080px; position: absolute; top: 0; left: 0; transform-origin: top left; }
+
+/* 위치 확인용 (?bg=1) — 실방송에선 투명 */
+.backdrop {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, var(--board-bg0) 0%, var(--board-bg1) 100%);  /* fix27: 테마 배경 */
+}
+
+/* ---------------- 칸 ---------------- */
+.tile {
+  position: absolute; background: var(--tile); border: 3px solid var(--tile-edge);
+  border-radius: 18px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 4px; padding: 8px; text-align: center; overflow: visible;
+  box-shadow: 0 4px 0 rgba(94, 75, 120, .14);
+}
+.tile .cat { position: absolute; left: 10px; right: 10px; top: 0; height: 7px; border-radius: 0 0 6px 6px; }
+/* fix23: 보드 칸 글자 — 주아체 통일 + 28px (시안 2탄 '나+㉱' — 곡천 확정)
+   fix24: '번지고 두껍다' 피드백 → 굵힘 제거 + 흰 빛 한 겹만 얇게 (시안 3탄 ㉡ — 곡천 확정)
+   ※ 이 규칙의 text-shadow가 위 fix22 공통 그림자보다 뒤에 있어 여기 값이 최종 적용됨 (글로우+그림자 합본)
+   ※ 글씨 색은 기본 #1F2C52 — 칸 편집 서랍의 '글씨 색'으로 칸별 오버라이드 가능(label_color, 표시 전용) */
+.tile .lb {
+  font-family: var(--board-font);  /* fix27: 테마 설정의 보드 폰트 (기본 주아체) */
+  font-size: calc(28px * var(--board-fs)); line-height: 1.2; word-break: keep-all;
+  color: var(--board-ink); letter-spacing: .01em;
+  position: relative; z-index: 9; /* 칸 텍스트는 항상 최상단 (스티커가 가리지 못함) */
+  text-shadow: 0 0 4px rgba(255, 255, 255, .85), 0 6px 10px rgba(74, 55, 100, .60);
+}
+.tile .sub { font-size: 17px; color: var(--ink-dim); font-weight: 600; position: relative; z-index: 9; }  /* fix23: 15→17px */
+.tile.corner { border-radius: 34px; background: var(--cream); border-color: var(--corner-edge); }
+.tile.corner .lb { font-size: calc(34px * var(--board-fs)); }  /* fix23: 30→34px · fix27: 크기 배율 */
+.tile.current {
+  border-color: var(--hotpink); background: var(--tile-hi);
+  box-shadow: 0 0 0 4px rgba(244, 114, 182, .30), 0 0 26px rgba(244, 114, 182, .45);
+}
+
+/* 스티커 — 흰 다이컷 테두리, 칸 모서리 걸침 */
+.stk { position: absolute; z-index: 4; pointer-events: none; filter: drop-shadow(0 3px 3px rgba(94, 75, 120, .30)); }
+.stk.a { right: -30px; top: -34px; width: 112px; height: 112px; transform: rotate(13deg) scale(var(--sc, 1)); }
+.stk.b { left: -26px; bottom: -28px; width: 86px; height: 86px; transform: rotate(-13deg) scale(var(--sc, 1)); }
+.stk.c { right: -22px; bottom: -25px; width: 80px; height: 80px; transform: rotate(7deg) scale(var(--sc, 1)); }
+img.stk { object-fit: contain; }  /* 업로드 그림 (fix16) */
+.tile.corner .stk.a { width: 136px; height: 136px; right: -28px; top: -40px; }
+.stk * { stroke-linejoin: round; stroke-linecap: round; }
+.stk :not(.ln):not(.dt) { paint-order: stroke; stroke: #FFFFFF; stroke-width: 8; }
+.stk .dt { stroke: none; }
+
+/* ---------------- 말 (다인 지원 — fix8) ---------------- */
+.piece { position: absolute; width: 48px; height: 48px; z-index: 10; /* fix22: 말이 칸 글자 위로 (곡천 확정) */ transform: translate(-50%, -64%); transition: left .22s linear, top .22s linear; }
+.piece .body {
+  position: relative; width: 100%; height: 100%; border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #FFE1EE, var(--hotpink) 62%, var(--hotpink-deep));
+  border: 3px solid #FFFFFF; box-shadow: 0 5px 12px rgba(214, 72, 143, .45);
+  display: flex; align-items: center; justify-content: center;
+}
+.piece .ch { font-size: 19px; color: #fff; text-shadow: 0 1px 2px rgba(120, 20, 70, .4); }
+.piece .body img { position: absolute; inset: 0; width: 100%; height: 100%;
+  border-radius: 50%; object-fit: cover; }  /* 말 그림 (fix17) */
+.pimgbg { background-size: cover; background-position: center; }
+.piece.p1 .body { background: radial-gradient(circle at 34% 28%, #FFF6D8, #D8CC90 62%, #B99C55);
+  box-shadow: 0 5px 12px rgba(160, 130, 60, .45); }
+.piece.p1 .ch { color: #4A3D14; text-shadow: 0 1px 1px rgba(255, 255, 255, .5); }
+.piece.p2 .body { background: radial-gradient(circle at 34% 28%, #EAF5FF, #A8CFF5 62%, #6E9CCB);
+  box-shadow: 0 5px 12px rgba(80, 130, 190, .45); }
+.piece.p2 .ch { color: #1E3A5C; text-shadow: 0 1px 1px rgba(255, 255, 255, .5); }
+.piece.p3 .body { background: radial-gradient(circle at 34% 28%, #E9FFF6, #8FE3C8 62%, #4FA98C);
+  box-shadow: 0 5px 12px rgba(60, 170, 130, .45); }
+.piece.p3 .ch { color: #12483A; text-shadow: 0 1px 1px rgba(255, 255, 255, .5); }
+.piece.p4 .body { background: radial-gradient(circle at 34% 28%, #F6F0FF, #C9AFF2 62%, #9678CC);
+  box-shadow: 0 5px 12px rgba(130, 100, 200, .45); }
+.piece.p4 .ch { color: #33235C; text-shadow: 0 1px 1px rgba(255, 255, 255, .5); }
+.piece.p5 .body { background: radial-gradient(circle at 34% 28%, #FFF7EA, #F5C98A 62%, #C98F4A);
+  box-shadow: 0 5px 12px rgba(200, 140, 70, .45); }
+.piece.p5 .ch { color: #5C3D14; text-shadow: 0 1px 1px rgba(255, 255, 255, .5); }
+.piece.hop .body { animation: hop .22s ease-out; }
+@keyframes hop {
+  0% { transform: translateY(0) scale(1, .92); }
+  45% { transform: translateY(-32px) scale(.94, 1.06); }
+  100% { transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .piece { transition: none; }
+  .piece.hop .body { animation: none; }
+}
+
+/* ---------------- 전광판 (세로형) ---------------- */
+.scoreboard {
+  position: absolute; left: 320px; top: 258px; width: 470px;
+  background: var(--panel); border: 3px solid var(--tile-edge); border-radius: 28px;
+  padding: 26px 26px 20px; box-shadow: 0 6px 0 rgba(94, 75, 120, .12); backdrop-filter: blur(4px);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.die {
+  width: 175px; height: 175px; border-radius: 36px; flex: none; background: var(--chip);
+  border: 5px solid var(--hotpink); display: flex; align-items: center; justify-content: center;
+  font-size: 104px; color: var(--hotpink); box-shadow: 0 7px 0 rgba(214, 72, 143, .25);
+}
+.die.rolling { animation: shake .12s linear infinite; }
+/* fix27: 커스텀 주사위 ★ 특수 결과 — 금빛 강조 (글자 항목 처리 시안 ③ 확정) */
+.die.star {
+  border-color: #E3A93D; color: #E3A93D; background: #FFFBEE;
+  box-shadow: 0 7px 0 rgba(227, 169, 61, .3), 0 0 24px rgba(227, 169, 61, .5);
+}
+@keyframes shake { 0% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } 100% { transform: rotate(-10deg); } }
+@media (prefers-reduced-motion: reduce) { .die.rolling { animation: none; } }
+.nick { font-size: 37px; color: var(--plum); white-space: nowrap; margin-top: 6px; }
+.dest { font-size: 27px; font-weight: 600; color: var(--ink-dim); text-align: center; }
+.dest b { color: var(--point-deep); font-weight: 800; }
+.queue {
+  position: absolute; top: -18px; right: -18px; background: var(--tile-hi); border: 3px solid var(--hotpink);
+  color: var(--hotpink-deep); border-radius: 999px; padding: 9px 18px; font-size: 21px; font-weight: 700;
+  transform: rotate(6deg); box-shadow: 0 4px 0 rgba(214, 72, 143, .2);
+}
+.hist {
+  align-self: stretch; margin-top: 8px; padding-top: 10px; border-top: 2px dashed var(--tile-edge);
+  font-size: 18px; color: var(--ink-dim); display: flex; flex-direction: column; gap: 4px; align-items: center;
+}
+.hist span b { color: var(--ink); font-weight: 700; }
+
+/* 칸 효과 표시 (수동 게이팅 대기) */
+.effect { align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--fx-bg); border: 2px dashed var(--pink); border-radius: 18px; padding: 10px 14px; }
+.fx-rule { font-size: 20px; font-weight: 600; color: var(--ink); text-align: center; word-break: keep-all; }
+.fx-flush { font-size: 26px; color: var(--hotpink-deep); }
+.fx-hint { font-size: 14px; color: var(--ink-dim); }
+.effect.defended { border-color: var(--sky); background: #F0F7FF; }
+
+/* ---------------- 상태바 / 타이머 / 토스트 ---------------- */
+.statusbar {
+  position: absolute; left: 320px; bottom: 252px;
+  background: var(--panel); border: 3px solid var(--tile-edge); border-radius: 22px;
+  padding: 12px 20px; font-size: 23px; color: var(--ink-dim);
+  display: flex; gap: 16px; align-items: center; box-shadow: 0 4px 0 rgba(94, 75, 120, .10);
+}
+.statusbar b { color: var(--hotpink-deep); font-weight: 800; font-size: 29px; }
+.statusbar .pl {
+  display: flex; align-items: center; gap: 8px; color: var(--ink);
+  background: var(--chip); border: 2px solid var(--lav); border-radius: 999px; padding: 5px 15px;
+}
+.statusbar .pl .dot { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto; }
+.statusbar .pl .dot.p1 { background: #C9B36E; }
+.statusbar .pl .dot.p2 { background: #7FAEDC; }
+.statusbar .pl .dot.p3 { background: #5FC9A4; }
+.statusbar .pl .dot.p4 { background: #A98BE0; }
+.statusbar .pl .dot.p5 { background: #E3A85F; }
+.statusbar .pl .sh { font-size: 21px; letter-spacing: -1px; }
+.timerdock { position: absolute; left: 1080px; bottom: 262px;   /* fix21: 칩이 커져 왼쪽 칸과 겹치던 것을 빈 공간으로 (부품 분리 배치는 그대로 자유) */
+  display: flex; flex-direction: column-reverse; gap: 9px; align-items: flex-start; }
+/* fix26: 타이머 A스타일 — 디지털 전광판 + 배경 게이지 (시안 A + 배치 방식3, 곡천 확정) */
+.timerchip {
+  position: relative; width: 340px; overflow: hidden;
+  background: #221A33; border: 3px solid #3A2E52; border-radius: 16px;
+  padding: 11px 16px; font-size: 18px; font-weight: 700;
+  box-shadow: 0 5px 0 rgba(30, 20, 50, .35), inset 0 0 18px rgba(120, 80, 200, .25);
+  display: flex; align-items: center; gap: 11px; animation: toastpop .25s ease-out;
+}
+.timerchip .fill {
+  position: absolute; left: 0; top: 0; bottom: 0; z-index: 1;
+  background: linear-gradient(90deg, rgba(124, 255, 203, .10), rgba(124, 255, 203, .28));
+  border-right: 2px solid rgba(124, 255, 203, .75);
+  box-shadow: 0 0 14px rgba(124, 255, 203, .35);
+  transition: width .5s linear;
+}
+.timerchip .tlb { color: #C9AFF2; z-index: 2; white-space: nowrap; text-shadow: none; }
+.timerchip b {
+  margin-left: auto; z-index: 2; font-family: Consolas, 'Courier New', monospace;
+  font-weight: 700; font-size: 30px; color: #7CFFCB;
+  text-shadow: 0 0 10px rgba(124, 255, 203, .7);
+  font-variant-numeric: tabular-nums; letter-spacing: 2px;
+}
+.timerchip.warn b { color: #FFD97C; text-shadow: 0 0 10px rgba(255, 217, 124, .7); }
+.timerchip.warn .fill { background: linear-gradient(90deg, rgba(255, 217, 124, .10), rgba(255, 217, 124, .28));
+  border-right-color: rgba(255, 217, 124, .8); box-shadow: 0 0 14px rgba(255, 217, 124, .4); }
+.timerchip.crit b { color: #FF7C8E; text-shadow: 0 0 12px rgba(255, 124, 142, .8); }
+.timerchip.crit .fill { background: linear-gradient(90deg, rgba(255, 124, 142, .12), rgba(255, 124, 142, .32));
+  border-right-color: rgba(255, 124, 142, .85); box-shadow: 0 0 16px rgba(255, 124, 142, .5); }
+.timerchip .tp {
+  font-style: normal; width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto; z-index: 2;
+  display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff;
+  background: var(--hotpink); border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .35);
+}
+.timerchip .tp.p1 { background: #C9B36E; color: #4A3D14; }
+.timerchip .tp.p2 { background: #7FAEDC; }
+.timerchip .tp.p3 { background: #5FC9A4; }
+.timerchip .tp.p4 { background: #A98BE0; }
+.timerchip .tp.p5 { background: #E3A85F; }
+/* 배치 방식3: 6개 초과 시 자동 축소 — 1열 유지, 상자(420×420) 안에 다 들어가게 */
+.timerdock.compact .timerchip { width: 300px; padding: 6px 13px; gap: 8px; border-width: 2px; border-radius: 12px; }
+.timerdock.compact .timerchip .tlb { font-size: 15px; }
+.timerdock.compact .timerchip b { font-size: 21px; letter-spacing: 1px; }
+.timerdock.compact .timerchip .tp { width: 19px; height: 19px; font-size: 11px; }
+.toast {
+  position: absolute; left: 320px; top: 190px;
+  background: #F0F7FF; border: 3px solid var(--sky); border-radius: 999px;
+  padding: 12px 24px; font-size: 24px; color: #4A7BB5;
+  box-shadow: 0 5px 0 rgba(94, 75, 120, .12);
+  animation: toastpop .3s ease-out;
+}
+@keyframes toastpop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------------- 미니게임 창 (fix18) ---------------- */
+.mgwin {
+  position: absolute; left: 540px; top: 200px; width: 840px; z-index: 12;
+  background: var(--panel); border: 3px solid var(--tile-edge); border-radius: 28px;
+  padding: 22px 30px 30px; box-shadow: 0 6px 0 rgba(94, 75, 120, .12); backdrop-filter: blur(4px);
+}
+.mg-title { font-size: 34px; color: var(--plum); text-align: center; }
+.mg-wait { font-size: 22px; color: var(--ink-dim); text-align: center; padding: 22px 0 8px; }
+#mgwBody { position: relative; padding-bottom: 8px; }
+.mg-svg { width: 100%; height: auto; display: block; margin-top: 40px; }
+.mg-rail { stroke: #D9C7EC; stroke-width: 6; stroke-linecap: round; }
+.mg-rung { stroke: #F5C98A; stroke-width: 6; stroke-linecap: round; }
+.mg-path {
+  fill: none; stroke: var(--hotpink); stroke-width: 8; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100; animation: mgtrace 1.8s ease-out forwards .15s;
+}
+@keyframes mgtrace { to { stroke-dashoffset: 0; } }
+.mg-top {
+  position: absolute; top: 10px; transform: translateX(-50%); width: 46px; height: 46px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--lav); color: #8B6CC9; font-size: 24px;
+  display: flex; align-items: center; justify-content: center; z-index: 2;
+}
+.mg-top.on { border-color: var(--hotpink); color: var(--hotpink-deep); background: #FFF0F6; }
+.mg-bot {
+  position: absolute; bottom: -8px; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px;
+  background: #FFF6FA; border: 2px solid var(--pink); color: var(--ink);
+  font-size: 19px; font-weight: 700; white-space: nowrap; z-index: 2;
+}
+.mg-bot.hit {
+  background: var(--hotpink); border-color: var(--hotpink); color: #fff;
+  transform: translateX(-50%) scale(1.18); transition: all .25s ease 1.9s;  /* 트레이스가 끝난 뒤 강조 */
+}
+.mg-cups { position: relative; height: 230px; margin-top: 56px; }  /* 들린 컵이 제목을 안 가리게 */
+.mg-cup { position: absolute; top: 52px; width: 130px; height: 140px;
+  transition: left .38s ease, top .3s ease; }
+.mg-cup .cupbody {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #F9A8C9, #E87BAF);
+  border-radius: 16px 16px 26px 26px;
+  clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, .45);
+}
+.mg-cup.lift { top: -16px; }
+.mg-ball {
+  position: absolute; bottom: 10px; width: 46px; height: 46px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF6D8, #F7D372 70%, #E9B94F);
+  border: 3px solid #fff; box-shadow: 0 4px 8px rgba(94, 75, 120, .3); transition: left .3s;
+}
+
+/* ---------------- 합본 파츠 온오프 (fix30) ----------------
+   설정 [오버레이 설정] 탭 — 통합 소스에서만 숨김. :not(.partial) 이라 파츠 소스는 항상 표시.
+   ※ 새 파츠 추가 시 여기 off- 규칙 + control.js PART_TOGGLES 도 세트 (기존 5곳 세트에 +2) */
+body:not(.partial).off-board #board, body:not(.partial).off-board #pieces { display: none !important; }
+body:not(.partial).off-scoreboard #scoreboard { display: none !important; }
+body:not(.partial).off-timers #timerdock { display: none !important; }
+body:not(.partial).off-status #statusbar { display: none !important; }
+body:not(.partial).off-toast #toast { display: none !important; }
+body:not(.partial).off-minigame #minigame { display: none !important; }
+
+/* ---------------- 부분 소스 모드 (fix11) ----------------
+   /overlay?part=board | scoreboard | timers | status | toast
+   권장 소스 크기: board·합본 1920×1080 / scoreboard 560×760 /
+   timers 420×420 / status 1200×90 / toast 760×120 (한 소스당 파트 하나 권장) */
+body.partial #backdrop, body.partial #board, body.partial #pieces,
+body.partial #scoreboard, body.partial #statusbar,
+body.partial #timerdock, body.partial #toast, body.partial #minigame { display: none; }
+body.part-minigame #minigame:not([hidden]) { display: block; }
+
+body.part-board #board { display: block; }
+body.part-board #pieces { display: block; }
+body.part-scoreboard #scoreboard:not([hidden]) { display: flex; }
+body.part-status #statusbar:not([hidden]) { display: flex; }
+body.part-timers #timerdock { display: flex; }
+body.part-toast #toast:not([hidden]) { display: block; }
+
+/* 위젯 모드(보드 미포함 파트): 좌상단 원본 크기 고정 → OBS에서 자유 배치 */
+/* fix25: 위젯 여백 24→12px — 권장 크기(설계 상자) 안에 내용이 온전히 들어가게.
+   (전광판 대기 배지가 위로 18px 튀어나와 top은 배지 포함 기준) */
+body.widget #scoreboard { left: 12px; top: 22px; }
+body.widget #statusbar { left: 12px; top: 12px; bottom: auto; }
+body.widget #timerdock { left: 12px; top: 12px; bottom: auto; flex-direction: column; }
+body.widget #toast { left: 12px; top: 12px; }
+body.widget #minigame { left: 12px; top: 12px; }
