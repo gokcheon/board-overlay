@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보드게임 오버레이 — 조작 대시보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/static/shared/tokens.css?v=38">
+<link rel="stylesheet" href="/static/control/control.css?v=38">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+    <defs>
+      <g id="s-flag">
+        <path class="ln" d="M20 8v48" stroke="#FFFFFF" stroke-width="17" fill="none"/>
+        <path class="ln" d="M20 8v48" stroke="#6E5E52" stroke-width="9" fill="none"/>
+        <path d="M20 10h26l-7 8 7 8H20z" fill="#F472B6"/>
+      </g>
+      <g id="s-uturn">
+        <path class="ln" d="M44 42V26a12 12 0 0 0-24 0v12" fill="none" stroke="#FFFFFF" stroke-width="21"/>
+        <path class="ln" d="M44 42V26a12 12 0 0 0-24 0v12" fill="none" stroke="#8FE3C8" stroke-width="13"/>
+        <path d="M10 34l10 16 10-16z" fill="#8FE3C8"/>
+      </g>
+      <g id="s-back">
+        <path d="M40 16L18 32l22 16z" fill="#A8CFF5"/>
+        <rect x="38" y="25" width="16" height="14" rx="5" fill="#A8CFF5"/>
+      </g>
+      <g id="s-skewer">
+        <path class="ln" d="M32 6v52" stroke="#FFFFFF" stroke-width="15" fill="none"/>
+        <path class="ln" d="M32 6v52" stroke="#B98A5E" stroke-width="8" fill="none"/>
+        <circle cx="32" cy="17" r="9" fill="#F5C98A"/>
+        <circle cx="32" cy="31" r="9" fill="#FDF1DC"/>
+        <circle cx="32" cy="45" r="9" fill="#F9A8C9"/>
+      </g>
+      <g id="s-fork">
+        <rect x="21" y="8" width="6" height="16" rx="3" fill="#C9AFF2"/>
+        <rect x="29" y="8" width="6" height="16" rx="3" fill="#C9AFF2"/>
+        <rect x="37" y="8" width="6" height="16" rx="3" fill="#C9AFF2"/>
+        <rect x="21" y="20" width="22" height="10" rx="5" fill="#C9AFF2"/>
+        <rect x="29" y="26" width="6" height="30" rx="3" fill="#C9AFF2"/>
+      </g>
+      <g id="s-halfglass">
+        <path d="M20 8h24l-3 46a4 4 0 0 1-4 4H27a4 4 0 0 1-4-4z" fill="#EFF7FF"/>
+        <path class="dt" d="M23.4 32h17.2l-1.6 22a4 4 0 0 1-4 4H29a4 4 0 0 1-4-4z" fill="#A8CFF5"/>
+      </g>
+      <g id="s-beer">
+        <path class="ln" d="M46 26h4a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6h-4" fill="none" stroke="#FFFFFF" stroke-width="17"/>
+        <path class="ln" d="M46 26h4a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6h-4" fill="none" stroke="#F5C98A" stroke-width="10"/>
+        <rect x="16" y="18" width="30" height="38" rx="7" fill="#F5C98A"/>
+        <circle cx="21" cy="15" r="8" fill="#FFF6E8"/>
+        <circle cx="32" cy="12" r="9" fill="#FFF6E8"/>
+        <circle cx="43" cy="15" r="8" fill="#FFF6E8"/>
+      </g>
+      <g id="s-wine">
+        <path d="M19 8h26c0 15-6 22-13 22s-13-7-13-22z" fill="#F9A8C9"/>
+        <rect x="29.5" y="28" width="5" height="20" fill="#DED4EE"/>
+        <rect x="21" y="48" width="22" height="6" rx="3" fill="#DED4EE"/>
+      </g>
+      <g id="s-ladder">
+        <rect x="18" y="6" width="7" height="52" rx="3.5" fill="#8FE3C8"/>
+        <rect x="39" y="6" width="7" height="52" rx="3.5" fill="#8FE3C8"/>
+        <rect x="20" y="16" width="24" height="6" rx="3" fill="#8FE3C8"/>
+        <rect x="20" y="30" width="24" height="6" rx="3" fill="#8FE3C8"/>
+        <rect x="20" y="44" width="24" height="6" rx="3" fill="#8FE3C8"/>
+      </g>
+      <g id="s-mic">
+        <path class="ln" d="M16 24a16 16 0 0 0 32 0" fill="none" stroke="#FFFFFF" stroke-width="13"/>
+        <path class="ln" d="M32 40v12M22 56h20" fill="none" stroke="#FFFFFF" stroke-width="13"/>
+        <path class="ln" d="M16 24a16 16 0 0 0 32 0" fill="none" stroke="#C9AFF2" stroke-width="6"/>
+        <path class="ln" d="M32 40v12M22 56h20" fill="none" stroke="#C9AFF2" stroke-width="6"/>
+        <rect x="23" y="6" width="18" height="28" rx="9" fill="#F472B6"/>
+      </g>
+      <g id="s-ban">
+        <circle class="ln" cx="32" cy="32" r="22" fill="none" stroke="#FFFFFF" stroke-width="16"/>
+        <circle class="ln" cx="32" cy="32" r="22" fill="none" stroke="#F472B6" stroke-width="9"/>
+        <path class="ln" d="M17 17l30 30" stroke="#FFFFFF" stroke-width="16" fill="none"/>
+        <path class="ln" d="M17 17l30 30" stroke="#F472B6" stroke-width="9" fill="none"/>
+      </g>
+      <g id="s-bubble">
+        <rect x="6" y="10" width="52" height="34" rx="15" fill="#8FE3C8"/>
+        <path d="M22 42l-5 14 16-11z" fill="#8FE3C8"/>
+        <circle class="dt" cx="21" cy="27" r="4" fill="#fff"/>
+        <circle class="dt" cx="32" cy="27" r="4" fill="#fff"/>
+        <circle class="dt" cx="43" cy="27" r="4" fill="#fff"/>
+      </g>
+      <g id="s-cheese">
+        <path d="M6 44L56 20l3 26H6z" fill="#F7D372"/>
+        <circle class="dt" cx="24" cy="38" r="4.5" fill="#E9B94F"/>
+        <circle class="dt" cx="40" cy="34" r="3.5" fill="#E9B94F"/>
+        <circle class="dt" cx="34" cy="42" r="3" fill="#E9B94F"/>
+      </g>
+      <g id="s-receipt">
+        <path d="M18 6h28v46l-4.6-4-4.7 4-4.7-4-4.7 4-4.7-4-4.6 4z" fill="#FFF9EE"/>
+        <rect class="dt" x="24" y="16" width="16" height="4.5" rx="2.2" fill="#F5C98A"/>
+        <rect class="dt" x="24" y="25" width="16" height="4.5" rx="2.2" fill="#F5C98A"/>
+        <rect class="dt" x="24" y="34" width="10" height="4.5" rx="2.2" fill="#F9A8C9"/>
+      </g>
+      <g id="s-bed">
+        <rect x="8" y="16" width="9" height="28" rx="4" fill="#C9AFF2"/>
+        <rect x="8" y="34" width="48" height="13" rx="6.5" fill="#FFF6E8"/>
+        <rect class="dt" x="20" y="25" width="15" height="10" rx="5" fill="#F9A8C9"/>
+        <rect x="10" y="47" width="6" height="8" rx="3" fill="#C9AFF2"/>
+        <rect x="48" y="47" width="6" height="8" rx="3" fill="#C9AFF2"/>
+      </g>
+      <g id="s-plane">
+        <path d="M6 32L58 12 44 54 32 40z" fill="#A8CFF5"/>
+        <path class="dt" d="M32 40l26-28-18 32z" fill="#7FB3E8"/>
+      </g>
+      <g id="s-shield">
+        <path d="M32 6l20 8v15c0 14-8 22-20 29-12-7-20-15-20-29V14z" fill="#A8CFF5"/>
+        <path class="dt" d="M32 40c-7-5-11-10-11-15a5.5 5.5 0 0 1 11-1.4A5.5 5.5 0 0 1 43 25c0 5-4 10-11 15z" fill="#fff"/>
+      </g>
+      <g id="s-wing">
+        <path d="M8 38c6-16 24-27 48-23l-11 8 11 3-13 6 9 6c-18 7-36 6-44 0z" fill="#EAF3FF"/>
+      </g>
+      <g id="s-heart">
+        <path d="M32 54C18 43 8 34 8 23a12 12 0 0 1 24-3 12 12 0 0 1 24 3c0 11-10 20-24 31z" fill="#F472B6"/>
+      </g>
+      <g id="s-lips">
+        <path d="M10 33c7-11 15-13 22-7 7-6 15-4 22 7-7 11-15 16-22 16s-15-5-22-16z" fill="#F472B6"/>
+        <path class="ln" d="M14 33h36" stroke="#D6488F" stroke-width="3" fill="none"/>
+      </g>
+      <g id="s-dice">
+        <rect class="ln" x="12" y="12" width="40" height="40" rx="11" fill="none" stroke="#FFFFFF" stroke-width="15"/>
+        <rect class="ln" x="12" y="12" width="40" height="40" rx="11" fill="#FFFFFF" stroke="#C9AFF2" stroke-width="6"/>
+        <circle class="dt" cx="23" cy="23" r="4.5" fill="#F472B6"/>
+        <circle class="dt" cx="32" cy="32" r="4.5" fill="#F472B6"/>
+        <circle class="dt" cx="41" cy="41" r="4.5" fill="#F472B6"/>
+      </g>
+          <g id="s-clock">
+        <circle cx="32" cy="34" r="22" fill="#A8CFF5"/>
+        <circle cx="32" cy="34" r="15" fill="#FFFFFF"/>
+        <path class="ln" d="M32 25v9l6 5" stroke="#5E4B78" stroke-width="4" fill="none"/>
+        <path class="ln" d="M20 12l-7 6M44 12l7 6" stroke="#5E4B78" stroke-width="4" fill="none"/>
+      </g>
+      <g id="s-crown">
+        <path d="M10 46L7 20l13 9 12-16 12 16 13-9-3 26z" fill="#F7D372"/>
+        <rect x="10" y="46" width="44" height="8" rx="4" fill="#E9B94F"/>
+        <circle class="dt" cx="32" cy="38" r="4" fill="#F472B6"/>
+      </g>
+      <g id="s-star">
+        <path d="M32 6l7.6 17.2L58 25l-14 12.6L48.4 56 32 46.4 15.6 56 20 37.6 6 25l18.4-1.8z" fill="#F7D372"/>
+        <circle class="dt" cx="32" cy="28" r="3.5" fill="#FFF6E8"/>
+      </g>
+      <g id="s-gift">
+        <rect x="10" y="24" width="44" height="32" rx="7" fill="#A8CFF5"/>
+        <rect class="dt" x="27" y="24" width="10" height="32" fill="#F9A8C9"/>
+        <rect x="6" y="14" width="52" height="12" rx="6" fill="#7FB3E8"/>
+        <rect class="dt" x="27" y="14" width="10" height="12" fill="#F9A8C9"/>
+      </g>
+      <g id="s-cake">
+        <rect x="10" y="30" width="44" height="24" rx="8" fill="#FDF1DC"/>
+        <path class="dt" d="M10 40c6 6 10-4 16 0s8 4 14 0 8 4 14 0v-6a8 8 0 0 0-8-8H18a8 8 0 0 0-8 8z" fill="#F9A8C9"/>
+        <rect x="29" y="14" width="6" height="12" rx="3" fill="#A8CFF5"/>
+        <circle cx="32" cy="10" r="4" fill="#F7D372"/>
+      </g>
+      <g id="s-soju">
+        <path d="M26 8h12v8c6 3 8 8 8 14v22a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6V30c0-6 2-11 8-14z" fill="#8FE3C8"/>
+        <rect x="25" y="4" width="14" height="8" rx="3" fill="#4FA98C"/>
+        <rect class="dt" x="23" y="34" width="18" height="14" rx="4" fill="#FFFFFF"/>
+      </g>
+      <g id="s-chicken">
+        <ellipse cx="26" cy="26" rx="18" ry="16" fill="#E3A85F"/>
+        <path class="ln" d="M38 36l12 12" stroke="#FDF1DC" stroke-width="10" fill="none"/>
+        <circle cx="53" cy="51" r="7" fill="#FDF1DC"/>
+        <circle class="dt" cx="20" cy="22" r="3" fill="#C98F4A"/>
+        <circle class="dt" cx="30" cy="30" r="2.5" fill="#C98F4A"/>
+      </g>
+      <g id="s-clover">
+        <circle cx="24" cy="24" r="11" fill="#8FE3C8"/>
+        <circle cx="40" cy="24" r="11" fill="#8FE3C8"/>
+        <circle cx="24" cy="40" r="11" fill="#8FE3C8"/>
+        <circle cx="40" cy="40" r="11" fill="#8FE3C8"/>
+        <path class="ln" d="M36 42c2 8 5 12 9 16" stroke="#4FA98C" stroke-width="5" fill="none"/>
+      </g>
+      <g id="s-note">
+        <path class="ln" d="M24 46V12l24-6v34" stroke="#C9AFF2" stroke-width="6" fill="none"/>
+        <ellipse cx="17" cy="47" rx="9" ry="7" fill="#C9AFF2"/>
+        <ellipse cx="41" cy="41" rx="9" ry="7" fill="#C9AFF2"/>
+      </g>
+      <g id="s-bomb">
+        <circle cx="27" cy="38" r="18" fill="#C0CCE4"/>
+        <rect x="33" y="13" width="12" height="9" rx="3" fill="#8C97BC" transform="rotate(28 39 17)"/>
+        <path class="ln" d="M45 14c4-6 9-6 12-3" stroke="#F5C98A" stroke-width="5" fill="none"/>
+        <circle cx="58" cy="10" r="5" fill="#F7D372"/>
+        <circle class="dt" cx="21" cy="32" r="4" fill="#FFFFFF"/>
+      </g>
+      <g id="s-moon">
+        <path d="M40 6a26 26 0 1 0 18 44A28 28 0 0 1 40 6z" fill="#F7D372"/>
+        <circle class="dt" cx="45" cy="17" r="3" fill="#FDF1DC"/>
+        <circle class="dt" cx="53" cy="29" r="2.5" fill="#FDF1DC"/>
+      </g>
+    </defs>
+  </svg>
+
+<header>
+  <div class="brand">
+    <div class="title-row">
+      <span class="title">보드게임 조작</span>
+      <span class="pill" id="connWs"><i class="dot"></i><span>서버</span></span>
+      <span class="pill" id="connChzzk" role="button" tabindex="0" title="누르면 설정이 열려요"><i class="dot"></i><span>치지직</span></span>
+      <button class="pill upd" id="updChip" hidden title="새 버전이 나왔어요 — 눌러서 업데이트">🔔 새 버전</button>
+    </div>
+    <div class="subline" id="subline">서버에 연결하는 중이에요…</div>
+  </div>
+  <div class="obs-wrap">
+    <button class="obs-chip" id="obsChip" title="누르면 소스 목록이 열려요">
+      <span class="obs-label">OBS 소스</span>
+      <code id="obsUrl">주소 확인 중…</code>
+      <span class="obs-caret">▾</span>
+    </button>
+    <div class="obs-pop" id="obsPop" hidden>
+      <div class="obs-pop-title">OBS 브라우저 소스 목록 <span class="dimtext">행을 누르면 주소가 복사돼요</span></div>
+      <div id="obsList"></div>
+      <div class="dimtext small">소스마다 투명 배경이라 OBS에서 자유롭게 배치·크기 조절하면 돼요.
+        합본 하나만 써도 되고, 부품을 골라 조합해도 됩니다.</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <button id="btnStart" class="hbtn">게임 시작</button>
+  <button id="btnPause" class="hbtn">일시정지</button>
+  <button id="btnSettings" class="hbtn ghost" title="설정">⚙️</button>
+</header>
+
+<main>
+  <!-- ─── 왼쪽: 보드 미니 모니터 + 상태 칩 + REALTIME ─── -->
+  <section class="left">
+    <div class="card board-card">
+      <div class="board-cap"><span class="rec"></span>시청자 화면 미리보기 · 1920×1080</div>
+      <div class="board-well">
+        <div class="board-wrap" id="boardWrap">
+          <div class="board-stage" id="stage">
+            <div id="board"></div>
+            <div id="pieces"></div>
+          </div>
+          <div class="board-note disp" id="boardNote" hidden></div>
+        </div>
+      </div>
+    </div>
+    <div class="card strip" id="statusStrip">
+      <span class="schip"><em>잔</em><b id="stCredit">0</b></span>
+      <span class="schip gold" id="stGuardChip" hidden><em>💝 방어 미지정</em><b id="stGuard">0</b></span>
+      <span id="stPieces"></span>
+      <!-- 벌칙 타이머 칩 (fix15) — 평소엔 이 작은 칩만, 커서를 올리면 전체 목록 팝오버.
+           전용 줄을 없애 미리보기(16:9)가 어떤 경우에도 줄어들지 않게 함 (곡천 요청) -->
+      <span class="tchip-wrap" id="timerWrap" hidden>
+        <span class="schip tchip" id="stTimerChip" tabindex="0" title="커서를 올리면 전체 타이머가 보여요">
+          <em>⏱</em><b id="stTimerCount">0</b><span class="tnext" id="stTimerNext"></span>
+        </span>
+        <div class="timer-pop" id="timerPop">
+          <div class="tb-t">⏱ 벌칙 타이머 <span class="dimtext">끝나면 말풍선으로 알려드려요</span></div>
+          <div class="tb-list" id="timerList"></div>
+        </div>
+      </span>
+      <span class="hist" id="stHist"></span>
+    </div>
+    <div class="card logc">
+      <div class="logt">REALTIME</div>
+      <ul id="log"><li class="dim">후원·명령·수정 기록이 여기에 실시간으로 쌓여요</li></ul>
+    </div>
+  </section>
+
+  <!-- ─── 오른쪽: 대기 큐 → 진행 → 보조 → 테스트 ─── -->
+  <aside class="side">
+    <div class="card qcard">
+      <div class="qt">대기 큐 <span id="queueTotal" class="qn"></span></div>
+      <ul id="queueList" class="qlist"><li class="dim empty">아직 비어 있어요 — 후원이 오면 하나씩 쌓여요</li></ul>
+      <div id="guardAssign"></div>
+      <button class="addc" id="btnAdd" title="주사위 1개를 직접 추가해요 (후원 유실 대비)">
+        <span class="p">⊕</span><span>수동 굴림</span>
+      </button>
+    </div>
+
+    <div class="card runc">
+      <button id="btnNext" class="go">다음 굴림 ▶</button>
+      <div class="msg" id="msg"></div>
+      <div class="slot" id="pendingSlot">
+        <div class="st">현재 칸 효과</div>
+        <div class="sv dimtext" id="pendingText">주사위가 멈춘 칸의 효과가 여기에 떠요</div>
+        <button id="btnTimer" class="tbt" hidden>
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 9v4l3 2M9 2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span id="timerLabel">타이머 시작</span>
+        </button>
+        <button id="btnMinigame" class="tbt" hidden>🎮 <span id="mgBtnLabel">미니게임 열기</span></button>
+      </div>
+    </div>
+
+    <div class="card iconrow">
+      <button id="btnUndo" class="ibtn" title="마지막 진행을 한 단계 되돌려요">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 14 4 9l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h9a7 7 0 1 1 0 14h-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        되돌리기
+      </button>
+      <button id="btnDefend" class="ibtn" title="현재 칸 벌칙을 방어권으로 무효화해요">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        방어권<b class="cnt" id="guardCount">0</b>
+      </button>
+    </div>
+
+    <details class="card" id="testZone">
+      <summary class="trow">테스트 후원 주입 <span class="dimtext">개발용</span></summary>
+      <div class="tbody">
+        <div class="row">
+          <input id="testNick" type="text" value="테스트" placeholder="닉네임">
+          <input id="testAmount" type="number" value="2000" placeholder="금액">
+          <button id="btnTestSend" class="hbtn primary-sm">보내기</button>
+        </div>
+        <div class="row" id="testQuick"></div>
+      </div>
+    </details>
+  </aside>
+</main>
+
+<div id="timerToasts"></div>
+
+<footer>
+  <span class="dimtext" id="editHint">보드의 칸을 누르면 바로 수정할 수 있어요.</span>
+</footer>
+
+<!-- ─── 칸 편집 서랍 ─── -->
+<div class="veil" id="editorVeil" hidden></div>
+<aside class="editor" id="editor" hidden>
+  <div class="ed-title">칸 수정 — <span id="edIndex"></span></div>
+  <label>이름<input id="edLabel" type="text" maxlength="12"></label>
+  <label>색 구분
+    <div class="cat-pick" id="edCat">
+      <button data-cat="" class="sw none" title="색 없음"></button>
+      <button data-cat="drink" class="sw" style="--c:var(--pink)" title="핑크"></button>
+      <button data-cat="move" class="sw" style="--c:var(--mint)" title="민트"></button>
+      <button data-cat="save" class="sw" style="--c:var(--peach)" title="피치"></button>
+      <button data-cat="guard" class="sw" style="--c:var(--sky)" title="하늘"></button>
+      <button data-cat="mission" class="sw" style="--c:var(--lav)" title="라벤더"></button>
+    </div>
+  </label>
+  <label>글씨 색 <span class="dimtext">(이 칸 이름의 색 — 오른쪽 끝은 직접 고르기)</span>
+    <div class="cat-pick" id="edInk">
+      <button data-ink="" class="sw none" title="기본 (남색)"></button>
+      <button data-ink="#5E4B78" class="sw" style="--c:#5E4B78" title="플럼"></button>
+      <button data-ink="#D6488F" class="sw" style="--c:#D6488F" title="딥로즈"></button>
+      <button data-ink="#1E3A5C" class="sw" style="--c:#1E3A5C" title="딥블루"></button>
+      <button data-ink="#12483A" class="sw" style="--c:#12483A" title="딥그린"></button>
+      <button data-ink="#8A4A1C" class="sw" style="--c:#8A4A1C" title="브라운"></button>
+      <input id="edInkCustom" class="ink-custom" type="color" value="#1F2C52" title="직접 고르기">
+    </div>
+  </label>
+  <label>규칙 설명 <span class="dimtext">(도착 시 전광판에 표시)</span>
+    <textarea id="edRule" rows="2" maxlength="60"></textarea></label>
+  <label>칸 효과
+    <select id="edPreset">
+      <option value="none">효과 없음 (설명만 표시)</option>
+      <option value="counter_credit">잔 적립 (+N)</option>
+      <option value="counter_snack">안주 적립 (+N)</option>
+      <option value="counter_guard">방어권 +1</option>
+      <option value="flush">적립 정산 (모아둔 잔 청산)</option>
+      <option value="reverse">진행 방향 반전</option>
+      <option value="x2">주사위 두배로 (같은 값 즉시 한 번 더)</option>
+      <option value="extra">한 번 더 굴리기</option>
+      <option value="timer">타이머 (N분)</option>
+      <option value="back">뒤/앞으로 N칸 이동</option>
+      <option value="goto">특정 칸으로 이동</option>
+      <option value="choice">원하는 칸 선택 이동 (세계여행)</option>
+      <option value="minigame_ladder">미니게임 — 사다리타기</option>
+      <option value="minigame_shuffle">미니게임 — 야바위</option>
+      <option value="advanced" disabled>고급 (직접 구성됨 — 유지)</option>
+    </select>
+  </label>
+  <label class="param" id="edParamRow" hidden><span id="edParamLabel">값</span>
+    <input id="edParam" type="number" step="0.5"></label>
+  <label>스티커 (그림) <span class="dimtext">자리를 누르면 그림을 고를 수 있어요</span>
+    <div class="stk-rows" id="edStkRows"></div>
+  </label>
+  <div class="stk-picker" id="stkPicker" hidden>
+    <div class="stk-pick-head"><span id="stkPickTitle">그림 고르기</span>
+      <button id="stkPickClose" class="x-btn mini-x" title="닫기">✕</button></div>
+    <div class="stk-grid" id="stkGrid"></div>
+    <div class="row">
+      <button id="btnStkUpload" class="hbtn">＋ 내 그림 올리기</button>
+      <input id="stkFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    </div>
+    <div class="dimtext small">배경이 투명한 PNG가 가장 예뻐요 (2MB 이하).
+      내가 올린 그림은 ✕로 지울 수 있어요.</div>
+  </div>
+  <div class="row">
+    <button id="btnEdSave" class="hbtn primary-sm">이 칸 저장</button>
+    <button id="btnEdClose" class="hbtn">닫기</button>
+  </div>
+</aside>
+
+<!-- ─── 설정 (가운데 창 · fix27: 4분류 탭 — 시안 v3 통과) ─── -->
+<div class="veil" id="settingsVeil" hidden></div>
+<div class="modal wide" id="settings" hidden>
+  <div class="modal-head">
+    <span class="modal-title">설정</span>
+    <button id="btnSettingsClose" class="x-btn" title="닫기">✕</button>
+  </div>
+
+  <div class="tabs" id="setTabs">
+    <button class="tab on" data-p="tabStream"><span class="ico">📡</span>스트리밍 설정</button>
+    <button class="tab" data-p="tabTheme"><span class="ico">🎨</span>테마 설정</button>
+    <button class="tab" data-p="tabOverlay"><span class="ico">🖥️</span>오버레이 설정</button>
+    <button class="tab" data-p="tabDice"><span class="ico">🎲</span>주사위 설정</button>
+    <button class="tab" data-p="tabImages"><span class="ico">🖼️</span>이미지 관리</button>
+  </div>
+
+  <!-- ═══ 1. 스트리밍 설정 ═══ -->
+  <div class="pane on" id="tabStream">
+  <section class="sec">
+    <div class="sec-title">치지직 연동</div>
+    <div class="sec-cap dimtext">실제 후원과 채팅 명령(!다음 등)을 방송에서 받아요</div>
+    <div class="sec-status" id="chzzkStatusLine"><i class="dot"></i>상태 확인 중…</div>
+    <div class="row">
+      <input id="chzzkId" type="text" placeholder="Client ID">
+      <input id="chzzkSecret" type="password" placeholder="Client Secret">
+    </div>
+    <div class="row right">
+      <button id="btnChzzkLogout" class="hbtn">연결 해제</button>
+      <button id="btnChzzkConnect" class="hbtn primary-sm">저장하고 연결</button>
+    </div>
+    <details class="sec-more">
+      <summary>처음이라면? 준비물 안내</summary>
+      <div class="dimtext small">
+        ① <b>치지직 개발자센터</b>(developers.chzzk.naver.com)에서 애플리케이션 등록<br>
+        ② 로그인 리디렉션 URL에 <code id="redirectUri">http://localhost:8140/auth/chzzk/callback</code> 입력<br>
+        ③ API Scope는 <b>유저 정보 조회 · 채팅 메시지 조회 · 후원 조회</b> 신청 (승인 후 연결 가능)<br>
+        ④ 발급된 Client ID/Secret을 위 칸에 넣고 [저장하고 연결]
+      </div>
+    </details>
+  </section>
+
+  <section class="sec">
+    <div class="sec-title">프로그램 업데이트 <span class="badge">신규</span></div>
+    <div class="sec-cap dimtext">현재 버전: <b class="goldtext" id="appVer">확인 중…</b> —
+      새 버전이 나오면 알아서 알려드리고, 설치판은 버튼 한 번으로 업데이트돼요.</div>
+    <div class="row right">
+      <button id="btnUpdCheck" class="hbtn">새 버전 확인</button>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-title">게임 규칙 <span class="badge">신규</span></div>
+    <div class="sec-cap dimtext">후원 금액이 굴림으로 바뀌는 규칙 — 저장하면 다음 후원부터 바로 적용돼요 (포트만 재시작 후)</div>
+    <div class="row">
+      <label class="dimtext">기준 금액</label><input id="cfgBase" type="number" min="100" step="100" style="width:105px">
+      <label class="dimtext">굴림 계산</label>
+      <select id="cfgMode">
+        <option value="per_multiple">배수 적립 (6,000원=3굴림)</option>
+        <option value="single">1회 고정 (금액 무관 1굴림)</option>
+      </select>
+    </div>
+    <div class="row">
+      <label class="dimtext">방어권 금액 (정확 일치)</label><input id="cfgGuard" type="number" min="100" step="100" style="width:105px">
+      <label class="dimtext">채팅 접두사</label><input id="cfgPrefix" type="text" maxlength="3" style="width:56px">
+      <label class="dimtext">포트</label><input id="cfgPort" type="number" min="1024" max="65535" style="width:90px">
+    </div>
+    <div class="row right">
+      <button id="btnRulesSave" class="hbtn primary-sm">규칙 저장</button>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-title">게임 모드 <span class="badge">신규</span></div>
+    <div class="sec-cap dimtext">후원을 받는 방식이에요 — 두 모드는 동시에 쓸 수 없어요</div>
+    <div class="mode-cards">
+      <button class="mode-card" id="modeCardSolo" data-mode="solo"><div class="mnm">🎤 단일 방송</div>
+        <div class="mcap">내 채널 후원만 받아요.<br>말은 자유롭게 추가 (로컬 참여자 — 후원 없음)</div></button>
+      <button class="mode-card" id="modeCardCollab" data-mode="collab"><div class="mnm">🎊 합방</div>
+        <div class="mcap">여러 방송인이 각자 채널로 후원을 받아요.<br>채널마다 말이 연결돼요 (방어권 자동 귀속)</div></button>
+    </div>
+
+    <!-- ── 단일 방송: 기존 진행 인원 UI 그대로 ── -->
+    <div id="paneSolo" hidden>
+    <div class="sec-cap dimtext">말이 순서대로 번갈아 움직여요 (최대 6명) · 이름·인원은 [적용]부터,
+      색·이모지는 [저장] 즉시 적용</div>
+    <div class="row">
+      <button id="plMinus" class="hbtn">−</button>
+      <b id="plCountLabel" class="plcount">1명</b>
+      <button id="plPlus" class="hbtn">+</button>
+    </div>
+    <div class="row" id="plNames"></div>
+    <div class="row right">
+      <button id="btnPlayersSave" class="hbtn">색·이모지만 저장</button>
+    </div>
+    </div><!-- /paneSolo -->
+
+    <!-- ── 합방: 채널 목록 (채널 추가 = 말 추가 · fix37) ── -->
+    <div id="paneCollab" hidden>
+    <div class="sec-cap dimtext">채널 추가 = 말 추가 (연결 필수 · 내 채널 포함 최대 6) —
+      방어권은 후원이 터진 채널의 말에게 자동으로 가요</div>
+    <div id="collabList"></div>
+    <div class="row" id="collabInviteRow">
+      <input id="collabPieceName" type="text" maxlength="8" placeholder="말 이름 (예: 단풍이)" style="width:150px">
+      <button id="btnCollabInvite" class="hbtn">＋ 채널 추가 — 초대 링크 만들기</button>
+    </div>
+    <div class="row" id="collabPasteRow" hidden>
+      <input id="collabPaste" type="text" placeholder="멤버가 로그인 후 뜬 주소를 통째로 붙여넣기" style="flex:1">
+      <button id="btnCollabRedeem" class="hbtn primary-sm">연결</button>
+    </div>
+    <div class="dimtext small">· 같은 자리 합방: 이 컴 브라우저에서 멤버가 로그인하면 자동 연결<br>
+      · 원격 합방: 링크 전달 → 멤버 로그인 → "연결할 수 없음" 페이지의 <b>주소창 주소를 통째로</b> 받아 붙여넣기</div>
+    </div><!-- /paneCollab -->
+
+    <!-- 말 그림 선택기 — 단일·합방 공용 (fix40: 합방에서도 말 그림 지원) -->
+    <div class="stk-picker" id="facePick" hidden>
+      <div class="stk-pick-head"><span id="facePickTitle">말 그림 고르기</span>
+        <button id="facePickClose" class="x-btn mini-x" title="닫기">✕</button></div>
+      <div class="stk-grid" id="facePickGrid"></div>
+      <div class="row">
+        <button id="btnFaceUpload" class="hbtn">＋ 그림 올리기</button>
+        <button id="btnFaceClear" class="hbtn">그림 빼기 (이모지/글자 사용)</button>
+      </div>
+      <div class="dimtext small">동그란 말 안에 꽉 차게 들어가요 — 정사각형·배경 투명 PNG 추천 (2MB 이하).</div>
+      <input id="faceFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    </div>
+
+    <div class="mode-warn">⚠ 모드나 구성을 바꾸고 [적용]하면 <b>반드시 새 회차가 시작</b>돼요 — 진행 중이던 판은 초기화됩니다</div>
+    <div class="row right" style="margin-top:8px">
+      <button id="btnModeApply" class="hbtn primary-sm">적용하고 새 회차 시작</button>
+    </div>
+  </section>
+  </div>
+
+  <!-- ═══ 2. 테마 설정 ═══ -->
+  <div class="pane" id="tabTheme">
+  <section class="sec">
+    <div class="sec-title">보드 색 테마</div>
+    <div class="sec-cap dimtext">시청자에게 보이는 <b class="goldtext">보드(오버레이) 화면의 색</b>만 바뀌어요 —
+      이 조작앱의 색은 지금 이대로 고정. 누르면 바로 적용되고 왼쪽 미리보기에도 보여요.</div>
+    <div class="themes" id="themeGrid"></div>
+  </section>
+  <section class="sec">
+    <div class="sec-title">보드 폰트</div>
+    <div class="sec-cap dimtext">보드 칸 글자의 글씨체 — 각 버튼이 실제 그 폰트로 보여요 (전부 수익방송 사용 가능 확인)</div>
+    <div class="seg" id="fontSeg"></div>
+  </section>
+  <section class="sec">
+    <div class="sec-title">글자 크기</div>
+    <div class="sec-cap dimtext">보드 칸 글자 기준 — 취한 시청자 배려 단계</div>
+    <div class="seg" id="sizeSeg"></div>
+  </section>
+  <section class="sec">
+    <div class="sec-title">미리보기</div>
+    <div class="sec-cap dimtext">테마 + 폰트 + 크기가 합쳐진 모습</div>
+    <div class="live" id="themeLive"></div>
+  </section>
+  </div>
+
+  <!-- ═══ 3. 오버레이 설정 (fix30) ═══ -->
+  <div class="pane" id="tabOverlay">
+  <section class="sec">
+    <div class="sec-title">통합 소스 파츠 표시</div>
+    <div class="sec-cap dimtext">OBS <b class="goldtext">통합(전체 합본) 소스</b>에서 각 파츠를 보일지 정해요.
+      예: 주사위 전광판만 위치를 바꾸고 싶으면 → 여기서 전광판을 끄고, OBS에 전광판
+      <b class="goldtext">파츠 소스를 따로 추가</b>하면 자유 배치! (파츠 소스는 이 설정과 무관하게 항상 보여요)</div>
+    <div id="partToggles"></div>
+  </section>
+  <section class="sec">
+    <div class="sec-title">배경</div>
+    <div class="sec-cap dimtext">통합 소스의 배경이에요. <b class="goldtext">끄면 투명</b>(내 방송 배경 위에 얹기 —
+      지금까지 방식), <b class="goldtext">켜면 테마 배경</b>이 같이 나와요 — 준비된 배경이 없어도
+      검은 화면 걱정 없이 바로 방송 가능! 테마를 바꾸면 배경도 세트로 바뀌어요.</div>
+    <div class="tglrow">
+      <input type="checkbox" class="tgl" id="tglBg">
+      <label for="tglBg" class="tgl-nm">테마 배경 보이기 <span class="dimtext" id="tglBgState"></span></label>
+    </div>
+  </section>
+  </div>
+
+  <!-- ═══ 4. 주사위 설정 ═══ -->
+  <div class="pane" id="tabDice">
+  <section class="sec">
+    <div class="sec-title">주사위 눈금</div>
+    <div class="sec-cap dimtext">
+      후원 굴림에서 나올 수 있는 결과와 확률이에요. <b class="goldtext">100%에서 직접 입력한 %를 먼저 빼고,
+      남은 값을 균등분배 체크 항목들이 똑같이 나눠요</b>. 직접 입력 합은 최대 99% —
+      넘기면 마지막에 적은 값이 자동으로 깎여요. 항목이 많아져도 목록만 스크롤돼요.
+    </div>
+    <div class="dice-head"><span>결과 (숫자=이동 칸 수, 글자=특수)</span><span>확률</span><span>균등분배</span><span>글자 처리</span><span></span></div>
+    <div class="dice-list" id="diceList"></div>
+    <div class="dice-foot">
+      <span class="row">
+        <button class="hbtn" id="btnDiceAdd">＋ 추가</button>
+        <button class="hbtn" id="btnDiceReset" title="1~6 균등분배로 되돌려요">기본 1~6</button>
+      </span>
+      <span class="sumline" id="diceSum"></span>
+      <button class="hbtn primary-sm" id="btnDiceApply">적용</button>
+    </div>
+    <div class="dimtext small" style="margin-top:6px">
+      · 글자 항목은 굴림에서 나오면 전광판에 ★로 떠요. <b>🚶 이동형</b> = 세계여행 칸처럼 칸 선택이 열리고
+      <b>그 차례의 말</b>이 이동 + 도착 칸 효과 발동. <b>🎪 연출형</b> = 표시만 하고 말 이동 없이
+      [효과 완료 ✓]로 진행. 기본값은 이동형이에요.
+    </div>
+  </section>
+  </div>
+
+  <!-- ═══ 4. 이미지 관리 ═══ -->
+  <div class="pane" id="tabImages">
+  <section class="sec">
+    <div class="sec-title">내가 올린 이미지</div>
+    <div class="sec-cap dimtext">칸 스티커·말 그림에 쓰는 업로드 이미지를 한곳에서 관리해요.
+      <b class="goldtext">사용 중</b>인 이미지는 실수로 못 지우게 잠겨요.</div>
+    <div class="imgrid" id="imgGrid"></div>
+    <div class="dimtext small" style="margin-top:4px">배경이 투명한 PNG가 가장 예뻐요 (2MB 이하).</div>
+  </section>
+  </div>
+</div>
+<input id="imgFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+
+<!-- ─── 미니게임 리모컨 (fix18) ─── -->
+<div class="veil" id="mgVeil" hidden></div>
+<div class="modal" id="mgModal" hidden>
+  <div class="modal-head">
+    <span class="modal-title" id="mgTitle">🎮 미니게임</span>
+    <button id="btnMgClose" class="x-btn" title="게임 닫기">✕</button>
+  </div>
+  <section class="sec" id="mgLadder" hidden>
+    <div class="row">
+      <span class="dimtext">줄 수</span>
+      <button id="mgMinus" class="hbtn">−</button><b id="mgCount" class="plcount">3</b><button id="mgPlus" class="hbtn">+</button>
+      <button id="btnMgSetup" class="hbtn primary-sm">사다리 준비</button>
+    </div>
+    <div id="mgResults" class="row"></div>
+    <div class="row" id="mgPickRow"></div>
+    <div class="row"><button id="btnMgRun" class="go mg-run" hidden>실행 ▶ 사다리 타고 내려가기</button></div>
+    <div class="sec-cap dimtext" id="mgLadderMsg"></div>
+  </section>
+  <section class="sec" id="mgShuffle" hidden>
+    <div class="row"><button id="btnMgShStart" class="hbtn primary-sm">공 보여주고 섞기 시작</button></div>
+    <div class="row" id="mgCups"></div>
+    <div class="sec-cap dimtext" id="mgShuffleMsg"></div>
+  </section>
+</div>
+<script src="/static/control/control.js?v=38"></script>
+</body>
+</html>
