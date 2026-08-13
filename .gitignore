@@ -1,0 +1,11 @@
+# 개인 정보·로컬 데이터 (절대 업로드 금지)
+config.json
+chzzk_tokens*
+userdata/
+# 빌드 산출물 (깃허브가 서버에서 새로 만들어요)
+__pycache__/
+dist/
+build/
+배포용/
+release_body.txt
+*.zip
