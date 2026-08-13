@@ -1,0 +1,48 @@
+/* 솜사탕 프리셋 — 확정 디자인 토큰 (명세 8.2 / 목업 v4).
+   설정 palette 로 :root 변수 오버라이드 가능 (기본값 = 아래).
+   fix27: 보드 테마 변수(--board-*, --panel 등) 추가 — 테마 설정이 이 변수들을 덮어쓴다. */
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Black+Han+Sans&family=Do+Hyeon&display=swap');
+@font-face {
+  font-family: 'Jalnan';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/JalnanOTF.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cafe24Ssurround'; /* 예비 폰트 */
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2004@1.0/Cafe24Ssurround.woff') format('woff');
+  font-display: swap;
+}
+
+:root {
+  --ink: #6E5E52;
+  --ink-dim: #A5978A;
+  --tile: #FDF8EE;
+  --tile-edge: #EBDCC9;
+  --pink: #F9A8C9;
+  --hotpink: #F472B6;
+  --mint: #8FE3C8;
+  --peach: #F5C98A;
+  --lav: #C9AFF2;
+  --sky: #A8CFF5;
+  --cream: #FFF6E8;
+  --plum: #5E4B78;
+  --hotpink-deep: #D6488F;
+
+  /* ── 보드 테마 변수 (fix27) — 오버레이 전용, 설정 창 테마가 오버라이드 ── */
+  --board-bg0: #D8C6F0;            /* 배경 그라데이션 (backdrop·미리보기) */
+  --board-bg1: #C2ABE4;
+  --board-ink: #1F2C52;            /* 보드 칸 글자 기본색 (fix24 확정값) */
+  --board-fs: 1;                   /* 글자 크기 배율 */
+  --board-font: "Jua", "Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif;
+  --corner-edge: #F0DFC6;          /* 모서리 칸 테두리 */
+  --panel: rgba(255, 252, 246, .93);  /* 전광판·상태바·미니게임 판 */
+  --chip: #FFFFFF;                 /* 주사위·상태바 알약 등 밝은 면 */
+  --tile-hi: #FFF0F6;              /* 현재 칸·대기 배지 하이라이트 */
+  --fx-bg: #FFF6FA;                /* 칸 효과 상자 */
+  --point-deep: #E38A3D;           /* 포인트색 (도착 칸 이름 등 읽히는 진한 버전) */
+}
+
+.disp {
+  font-family: Jalnan, Cafe24Ssurround, "Pretendard Variable", Pretendard, sans-serif;
+  font-weight: 400;
+}
